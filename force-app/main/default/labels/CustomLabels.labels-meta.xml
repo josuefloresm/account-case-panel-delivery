@@ -81,12 +81,84 @@
         <value>No cases match the selected filters.</value>
     </labels>
     <labels>
+        <fullName>ACP_CloseAction</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Row action label</shortDescription>
+        <value>Close Case</value>
+    </labels>
+    <labels>
+        <fullName>ACP_ConfirmCloseTitle</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Confirmation dialog title</shortDescription>
+        <value>Close Case</value>
+    </labels>
+    <labels>
+        <fullName>ACP_ConfirmCloseMessage</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Confirmation dialog message. {0} = Case Number</shortDescription>
+        <value>Close case {0}? Its status will be set to Closed.</value>
+    </labels>
+    <labels>
+        <fullName>ACP_CloseSuccessTitle</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Success toast title</shortDescription>
+        <value>Case closed</value>
+    </labels>
+    <labels>
+        <fullName>ACP_CloseSuccessMessage</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Success toast message. {0} = Case Number</shortDescription>
+        <value>Case {0} was closed.</value>
+    </labels>
+    <labels>
+        <fullName>ACP_CloseErrorTitle</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Error toast title</shortDescription>
+        <value>We couldn't close the case</value>
+    </labels>
+    <labels>
         <fullName>ACP_LoadError</fullName>
         <categories>AccountCasePanel</categories>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Error shown when data cannot be loaded</shortDescription>
         <value>We couldn't load the cases for this account. Refresh the page or contact your administrator.</value>
+    </labels>
+    <labels>
+        <fullName>ACP_GenericError</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Fallback when an error has no readable message</shortDescription>
+        <value>Something went wrong. Try again or contact your administrator.</value>
+    </labels>
+    <labels>
+        <fullName>ACP_RefreshErrorTitle</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Warning toast title: case closed but panel not refreshed</shortDescription>
+        <value>Case closed, panel not updated</value>
+    </labels>
+    <labels>
+        <fullName>ACP_RefreshErrorMessage</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Warning toast message. {0} = Case Number</shortDescription>
+        <value>Case {0} was closed, but the list and counters couldn't refresh. Reload the page to see the latest data.</value>
     </labels>
     <labels>
         <fullName>ACP_ListTruncated</fullName>

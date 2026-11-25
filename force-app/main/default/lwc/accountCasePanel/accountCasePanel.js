@@ -1,11 +1,17 @@
 import { LightningElement, api, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
+import { refreshApex } from '@salesforce/apex';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import LightningConfirm from 'lightning/confirm';
 import { getObjectInfo, getPicklistValues } from 'lightning/uiObjectInfoApi';
+import { updateRecord } from 'lightning/uiRecordApi';
+import { reduceSaveErrors } from 'c/errorUtils';
 
 import getCases from '@salesforce/apex/AccountCasePanelController.getCases';
 import getCaseSummary from '@salesforce/apex/AccountCasePanelController.getCaseSummary';
 
 import CASE_OBJECT from '@salesforce/schema/Case';
+import ID_FIELD from '@salesforce/schema/Case.Id';
 import CASE_NUMBER_FIELD from '@salesforce/schema/Case.CaseNumber';
 import SUBJECT_FIELD from '@salesforce/schema/Case.Subject';
 import STATUS_FIELD from '@salesforce/schema/Case.Status';
@@ -22,9 +28,20 @@ import ALL_OPTION from '@salesforce/label/c.ACP_AllOption';
 import LOADING from '@salesforce/label/c.ACP_Loading';
 import NO_CASES from '@salesforce/label/c.ACP_NoCases';
 import NO_MATCHES from '@salesforce/label/c.ACP_NoMatches';
+import CLOSE_ACTION from '@salesforce/label/c.ACP_CloseAction';
+import CONFIRM_CLOSE_TITLE from '@salesforce/label/c.ACP_ConfirmCloseTitle';
+import CONFIRM_CLOSE_MESSAGE from '@salesforce/label/c.ACP_ConfirmCloseMessage';
+import CLOSE_SUCCESS_TITLE from '@salesforce/label/c.ACP_CloseSuccessTitle';
+import CLOSE_SUCCESS_MESSAGE from '@salesforce/label/c.ACP_CloseSuccessMessage';
+import CLOSE_ERROR_TITLE from '@salesforce/label/c.ACP_CloseErrorTitle';
 import LOAD_ERROR from '@salesforce/label/c.ACP_LoadError';
+import GENERIC_ERROR from '@salesforce/label/c.ACP_GenericError';
+import REFRESH_ERROR_TITLE from '@salesforce/label/c.ACP_RefreshErrorTitle';
+import REFRESH_ERROR_MESSAGE from '@salesforce/label/c.ACP_RefreshErrorMessage';
 import LIST_TRUNCATED from '@salesforce/label/c.ACP_ListTruncated';
 
+const CLOSED_STATUS = 'Closed';
+const CLOSE_ACTION_NAME = 'close_case';
 const ALL = '';
 const TILE_VALUE_CLASS = 'slds-text-heading_large';
 
@@ -40,6 +57,11 @@ const COLUMN_FIELDS = [
 
 const formatLabel = (label, ...values) =>
     values.reduce((text, value, index) => text.replace(`{${index}}`, value), label);
+
+// Closed Cases keep the menu but the action is disabled, so the column layout stays stable.
+const getRowActions = (row, doneCallback) => {
+    doneCallback([{ label: CLOSE_ACTION, name: CLOSE_ACTION_NAME, disabled: row.IsClosed }]);
+};
 
 export default class AccountCasePanel extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -60,6 +82,7 @@ export default class AccountCasePanel extends NavigationMixin(LightningElement) 
     recordTypeId;
     statusFilter = ALL;
     priorityFilter = ALL;
+    isClosing = false;
 
     @wire(getCases, { accountId: '$recordId' })
     wiredCases(result) {
@@ -89,7 +112,9 @@ export default class AccountCasePanel extends NavigationMixin(LightningElement) 
             this.objectInfoError = new Error('MISSING_CASE_FIELDS');
             return;
         }
-        this.columns = this.buildColumns(data.fields);
+        // Closing is an update: without edit access to Case.Status the action is not offered.
+        const canClose = data.updateable && data.fields[STATUS_FIELD.fieldApiName].updateable;
+        this.columns = this.buildColumns(data.fields, canClose);
     }
 
     @wire(getPicklistValues, { recordTypeId: '$recordTypeId', fieldApiName: STATUS_FIELD })
@@ -109,7 +134,7 @@ export default class AccountCasePanel extends NavigationMixin(LightningElement) 
             isPending(this.statusValues) ||
             isPending(this.priorityValues) ||
             columnsPending;
-        return pending && !this.hasError;
+        return (pending || this.isClosing) && !this.hasError;
     }
 
     // Load errors always surface as one readable label; Apex already logs the technical detail.
@@ -189,6 +214,13 @@ export default class AccountCasePanel extends NavigationMixin(LightningElement) 
         this.priorityFilter = event.detail.value;
     }
 
+    async handleRowAction(event) {
+        const { action, row } = event.detail;
+        if (action.name === CLOSE_ACTION_NAME) {
+            await this.closeCase(row);
+        }
+    }
+
     // Standard record URLs keep the Case Number a real link (new tab, copy address).
     // A row whose URL cannot be generated degrades to plain text instead of failing the list.
     // The request id drops the result of a load that a newer one has already replaced.
@@ -214,9 +246,67 @@ export default class AccountCasePanel extends NavigationMixin(LightningElement) 
         }
     }
 
-    buildColumns(fields) {
+    async closeCase(row) {
+        const confirmed = await LightningConfirm.open({
+            label: CONFIRM_CLOSE_TITLE,
+            message: formatLabel(CONFIRM_CLOSE_MESSAGE, row.CaseNumber),
+            theme: 'warning'
+        });
+        if (!confirmed) {
+            return;
+        }
+
+        this.isClosing = true;
+        try {
+            if (await this.saveClosedStatus(row)) {
+                await this.refreshPanel(row);
+            }
+        } finally {
+            this.isClosing = false;
+        }
+    }
+
+    // Save failures keep actionable platform messages (validation rules, field errors);
+    // anything else falls back to a controlled label.
+    async saveClosedStatus(row) {
+        try {
+            await updateRecord({
+                fields: {
+                    [ID_FIELD.fieldApiName]: row.Id,
+                    [STATUS_FIELD.fieldApiName]: CLOSED_STATUS
+                }
+            });
+        } catch (error) {
+            console.error('Close case failed', error);
+            const message = reduceSaveErrors(error).join(' ') || GENERIC_ERROR;
+            this.showToast('error', CLOSE_ERROR_TITLE, message);
+            return false;
+        }
+        this.showToast(
+            'success',
+            CLOSE_SUCCESS_TITLE,
+            formatLabel(CLOSE_SUCCESS_MESSAGE, row.CaseNumber)
+        );
+        return true;
+    }
+
+    // The Case is already closed here: a refresh failure must not read as a failed close.
+    async refreshPanel(row) {
+        try {
+            await Promise.all([refreshApex(this.casesResult), refreshApex(this.summary)]);
+        } catch (error) {
+            console.error('Panel refresh after close failed', error);
+            this.showToast(
+                'warning',
+                REFRESH_ERROR_TITLE,
+                formatLabel(REFRESH_ERROR_MESSAGE, row.CaseNumber)
+            );
+        }
+    }
+
+    buildColumns(fields, canClose) {
         const labelOf = (field) => fields[field.fieldApiName].label;
-        return [
+        const columns = [
             {
                 label: labelOf(CASE_NUMBER_FIELD),
                 fieldName: 'recordUrl',
@@ -252,6 +342,10 @@ export default class AccountCasePanel extends NavigationMixin(LightningElement) 
                 }
             }
         ];
+        if (canClose) {
+            columns.push({ type: 'action', typeAttributes: { rowActions: getRowActions } });
+        }
+        return columns;
     }
 
     toOptions(picklist) {
@@ -260,5 +354,9 @@ export default class AccountCasePanel extends NavigationMixin(LightningElement) 
             { label: ALL_OPTION, value: ALL },
             ...values.map(({ label, value }) => ({ label, value }))
         ];
+    }
+
+    showToast(variant, title, message) {
+        this.dispatchEvent(new ShowToastEvent({ variant, title, message }));
     }
 }

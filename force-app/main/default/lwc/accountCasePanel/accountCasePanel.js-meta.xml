@@ -3,7 +3,7 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Account Case Panel</masterLabel>
-    <description>Summarizes and filters the Cases of the current Account.</description>
+    <description>Summarizes, filters and closes the Cases of the current Account.</description>
     <targets>
         <target>lightning__RecordPage</target>
     </targets>
