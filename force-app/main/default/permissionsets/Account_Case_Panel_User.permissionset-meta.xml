@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Account Case Panel User</label>
+    <description>Grants access to the Apex controller behind the Account Case Panel. Case and Account access still comes from the user's profile.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <classAccesses>
+        <apexClass>AccountCasePanelController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+</PermissionSet>

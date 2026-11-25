@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>ACP_LoadError</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Error shown when data cannot be loaded</shortDescription>
+        <value>We couldn't load the cases for this account. Refresh the page or contact your administrator.</value>
+    </labels>
+</CustomLabels>
