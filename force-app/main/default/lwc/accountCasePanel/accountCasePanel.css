@@ -1,0 +1,8 @@
+.panel-body {
+    min-height: 6rem;
+}
+
+.table-container {
+    max-height: 24rem;
+    overflow-y: auto;
+}

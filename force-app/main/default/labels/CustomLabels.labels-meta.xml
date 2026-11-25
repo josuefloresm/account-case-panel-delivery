@@ -1,11 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>ACP_Title</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Card title</shortDescription>
+        <value>Cases</value>
+    </labels>
+    <labels>
+        <fullName>ACP_Open</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Counter: open cases</shortDescription>
+        <value>Open</value>
+    </labels>
+    <labels>
+        <fullName>ACP_Closed</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Counter: closed cases</shortDescription>
+        <value>Closed</value>
+    </labels>
+    <labels>
+        <fullName>ACP_OpenHighPriority</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Counter: open high-priority cases</shortDescription>
+        <value>Open High Priority</value>
+    </labels>
+    <labels>
+        <fullName>ACP_FilterStatus</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Status filter label</shortDescription>
+        <value>Status</value>
+    </labels>
+    <labels>
+        <fullName>ACP_FilterPriority</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Priority filter label</shortDescription>
+        <value>Priority</value>
+    </labels>
+    <labels>
+        <fullName>ACP_AllOption</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Filter option that disables the filter</shortDescription>
+        <value>All</value>
+    </labels>
+    <labels>
+        <fullName>ACP_Loading</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Spinner alternative text</shortDescription>
+        <value>Loading cases</value>
+    </labels>
+    <labels>
+        <fullName>ACP_NoCases</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Empty state when the account has no cases</shortDescription>
+        <value>This account has no cases yet.</value>
+    </labels>
+    <labels>
+        <fullName>ACP_NoMatches</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Empty state when filters exclude every case</shortDescription>
+        <value>No cases match the selected filters.</value>
+    </labels>
+    <labels>
         <fullName>ACP_LoadError</fullName>
         <categories>AccountCasePanel</categories>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Error shown when data cannot be loaded</shortDescription>
         <value>We couldn't load the cases for this account. Refresh the page or contact your administrator.</value>
+    </labels>
+    <labels>
+        <fullName>ACP_ListTruncated</fullName>
+        <categories>AccountCasePanel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Notice when the list is capped. {0} = shown, {1} = total</shortDescription>
+        <value>Showing the {0} most recent of {1} cases. Counters include all cases.</value>
     </labels>
 </CustomLabels>

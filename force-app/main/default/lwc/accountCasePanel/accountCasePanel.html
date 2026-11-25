@@ -1,0 +1,107 @@
+<template>
+    <lightning-card title={labels.TITLE} icon-name="standard:case">
+        <div class="slds-is-relative slds-var-p-horizontal_medium panel-body">
+            <template lwc:if={isLoading}>
+                <lightning-spinner
+                    alternative-text={labels.LOADING}
+                    size="medium"
+                ></lightning-spinner>
+            </template>
+
+            <template lwc:if={hasError}>
+                <div class="slds-scoped-notification slds-theme_error" role="alert">
+                    <div class="slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <lightning-icon
+                                icon-name="utility:error"
+                                variant="inverse"
+                                size="small"
+                                alternative-text={labels.LOAD_ERROR}
+                            ></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <p>{labels.LOAD_ERROR}</p>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template lwc:else>
+                <template lwc:if={summary.data}>
+                    <lightning-layout multiple-rows class="slds-var-m-bottom_medium">
+                        <template for:each={summaryTiles} for:item="tile">
+                            <lightning-layout-item
+                                key={tile.key}
+                                size="12"
+                                small-device-size="4"
+                                padding="around-small"
+                            >
+                                <div class="slds-box slds-text-align_center">
+                                    <p class="slds-text-title_caps">{tile.label}</p>
+                                    <p class={tile.valueClass}>{tile.value}</p>
+                                </div>
+                            </lightning-layout-item>
+                        </template>
+                    </lightning-layout>
+                </template>
+
+                <template lwc:if={showList}>
+                    <lightning-layout multiple-rows class="slds-var-m-bottom_small">
+                        <lightning-layout-item
+                            size="12"
+                            small-device-size="6"
+                            padding="horizontal-small"
+                        >
+                            <lightning-combobox
+                                label={labels.FILTER_STATUS}
+                                value={statusFilter}
+                                options={statusOptions}
+                                onchange={handleStatusChange}
+                            ></lightning-combobox>
+                        </lightning-layout-item>
+                        <lightning-layout-item
+                            size="12"
+                            small-device-size="6"
+                            padding="horizontal-small"
+                        >
+                            <lightning-combobox
+                                label={labels.FILTER_PRIORITY}
+                                value={priorityFilter}
+                                options={priorityOptions}
+                                onchange={handlePriorityChange}
+                            ></lightning-combobox>
+                        </lightning-layout-item>
+                    </lightning-layout>
+
+                    <template lwc:if={truncatedMessage}>
+                        <p class="slds-text-color_weak slds-var-m-bottom_x-small">
+                            {truncatedMessage}
+                        </p>
+                    </template>
+
+                    <template lwc:if={hasRows}>
+                        <div class="table-container">
+                            <lightning-datatable
+                                key-field="Id"
+                                data={filteredCases}
+                                columns={columns}
+                                hide-checkbox-column
+                            ></lightning-datatable>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <div
+                            class="slds-text-align_center slds-text-color_weak slds-var-p-vertical_large"
+                        >
+                            <lightning-icon
+                                icon-name="utility:info"
+                                size="small"
+                                class="slds-var-m-bottom_x-small"
+                            ></lightning-icon>
+                            <p>{emptyMessage}</p>
+                        </div>
+                    </template>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>
