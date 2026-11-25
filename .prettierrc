@@ -3,5 +3,21 @@
   "singleQuote": true,
   "printWidth": 100,
   "tabWidth": 4,
-  "overrides": [{ "files": "**/lwc/**/*.html", "options": { "parser": "lwc" } }]
+  "overrides": [
+    {
+      "files": "**/lwc/**/*.html",
+      "options": {
+        "parser": "lwc"
+      }
+    },
+    {
+      "files": "**/*.{cls,trigger,apex}",
+      "options": {
+        "parser": "apex"
+      }
+    }
+  ],
+  "plugins": [
+    "prettier-plugin-apex"
+  ]
 }

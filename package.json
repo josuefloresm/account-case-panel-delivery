@@ -1,0 +1,23 @@
+{
+  "name": "account-case-panel",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Account Case Panel - Lightning Web Component for the Account record page",
+  "scripts": {
+    "lint": "eslint force-app/main/default/lwc --ext .js",
+    "prettier": "prettier --write \"force-app/**/*.{cls,js,html,css}\"",
+    "prettier:verify": "prettier --check \"force-app/**/*.{cls,js,html,css}\""
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.13",
+    "@babel/eslint-parser": "^7.29.13",
+    "@lwc/eslint-plugin-lwc": "^2.2.0",
+    "@salesforce/eslint-config-lwc": "^3.7.2",
+    "@salesforce/eslint-plugin-lightning": "^1.0.1",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jest": "^29.17.1",
+    "prettier": "^3.10.1",
+    "prettier-plugin-apex": "^2.4.0"
+  }
+}
